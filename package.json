@@ -1,7 +1,7 @@
 {
-  "name": "electron-quick-start",
+  "name": "ydl",
   "version": "1.0.0",
-  "description": "A minimal Electron application",
+  "description": "Graphic visualizer for youtube-dl + youtube-dl-parallel",
   "main": "main.js",
   "scripts": {
     "start": "electron ."
@@ -9,14 +9,16 @@
   "repository": "https://github.com/electron/electron-quick-start",
   "keywords": [
     "Electron",
-    "quick",
-    "start",
-    "tutorial",
-    "demo"
+    "ydl",
+    "youtube-dl",
+    "youtube-dl-parallel"
   ],
   "author": "GitHub",
   "license": "CC0-1.0",
   "devDependencies": {
     "electron": "^2.0.0"
+  },
+  "dependencies": {
+    "parsimmon": "^1.7.3"
   }
 }

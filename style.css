@@ -1,0 +1,124 @@
+/* blue #3daee9 */
+
+.grid {
+    display: grid;
+    grid-template-rows: 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr;
+}
+
+.g { display: grid; }
+.g.c3 { grid-template-columns: 1fr 1fr 1fr; }
+.g.r1 { grid-template-rows: 1fr; }
+
+.cell {
+    overflow-y: auto;
+}
+
+.config {
+    grid-column: 1 / 4;
+    grid-row: 1 / 2;
+    overflow-y: auto;
+}
+
+.downloads {
+    overflow-y: auto;
+}
+
+.downloads.queued {
+    grid-column: 1 / 2;
+}
+
+.downloads.downloading {
+    grid-column: 2 / 3;
+}
+
+.downloads.done {
+    grid-column: 3 / 4;
+}
+
+body {
+    padding: 0;
+    margin: 0;
+    background: #eff0f1;
+    color: #475057;
+    font-family: 'Hack';
+    font-size: 12px;
+}
+
+input, body, select {
+    font-size: 12px;
+    font-family: 'Hack';
+}
+
+.scroll {
+    overflow-y: auto;
+}
+
+
+table {
+    border-collapse: collapse;
+}
+
+table > thead > tr {
+    background-color: #c8e7f7;
+}
+
+table tr {
+    transition: height .2s;
+}
+
+table td {
+    margin: 0;
+    padding: 0;
+}
+
+#downloads {
+    grid-row: 2 / 4;
+    grid-column: 1 / 4;
+    width: 100%;
+}
+
+.download {
+    padding: 8px;
+    margin: 8px;
+    box-shadow: 0 0 1px #333;
+}
+
+.download h5 {
+    text-align: left;
+}
+
+.download > p {
+    display: flex;
+}
+
+.download > p span {
+    text-align: left;
+    vertical-align: bottom;
+    flex: 1;
+}
+
+
+.form-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+}
+
+.form-label {
+    grid-column: 1 / 2;
+    margin: 2px;
+    margin-top: 5px;
+}
+
+.form-control {
+    grid-column: 2 / 4;
+    background-color: #cddfe8;
+    color: #333;
+    padding: 3px 6px;
+    border: none;
+}
+
+.form-control[disabled] {
+    background: #96a2a9;
+}
+

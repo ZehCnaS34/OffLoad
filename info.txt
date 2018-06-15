@@ -1,0 +1,17 @@
+Deleting original file MIDNIGHT TRAIN - Part 19 - Detroit - Become Human Let's Play Walkthrough Gameplay-RVOioJ632Ww.f299.mp4 (pass -k to keep)
+WARNING: Requested formats are incompatible for merge and will be merged into mkv.
+[download]   0.0% of 1.06GiB at  8.90MiB/s ETA 02:01
+[download]   0.0% of 707.68MiB at 622.55KiB/s ETA 19:25
+[download]   0.1% of 1.06GiB at  8.86MiB/s ETA 02:01
+[download]  88.6% of 22.02MiB at  7.56MiB/s ETA 00:00
+[download]  96.6% of 22.02MiB at  8.01MiB/s ETA 00:00
+[download]  99.1% of 624.20MiB at  7.35MiB/s ETA 00:00
+[download] 100% of 22.02MiB in 00:03
+[download] 100.0% of 624.20MiB at  7.21MiB/s ETA 00:00
+[download] Destination: ALICE IN WONDERLAND - Part 2 - Detroit - Become Human Let's Play Walkthrough Gameplay-6a7P91sqNog.f299.mp4
+[download] Destination: DO ANDROIDS DREAM OF ELECTRIC SHEEP - Part 1 - Detroit - Become Human Let's Play Walkthrough Gameplay-r7vtlHyMwtc.f299.mp4
+[download] Destination: I AM ALIVE CRIME SCENE - Part 4 - Detroit - Become Human Let's Play Walkthrough Gameplay-Qhf-5sx74G0.f299.mp4
+[download] Destination: MIDNIGHT TRAIN - Part 19 - Detroit - Become Human Let's Play Walkthrough Gameplay-RVOioJ632Ww.f251.webm
+[download] Destination: THE ARTIST IN ALL OF US - Part 3 - Detroit - Become Human Let's Play Walkthrough Gameplay-pvIk6ql8Y7E.f299.mp4
+[ffmpeg] Merging formats into "MIDNIGHT TRAIN - Part 19 - Detroit - Become Human Let's Play Walkthrough Gameplay-RVOioJ632Ww.mkv"
+[youtube] 6a7P91sqNog: Downloading video info webpage

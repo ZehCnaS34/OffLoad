@@ -1,19 +1,57 @@
 <!DOCTYPE html>
 <html>
+
   <head>
     <meta charset="UTF-8">
-    <title>Hello World!</title>
+    <title>YDL</title>
+    <link rel="stylesheet" href="./style.css" />
+    <!-- development version, includes helpful console warnings -->
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <!-- production version, optimized for size and speed -->
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
   </head>
-  <body>
-    <h1>Hello World!</h1>
-    <!-- All of the Node.js APIs are available in this renderer process. -->
-    We are using Node.js <script>document.write(process.versions.node)</script>,
-    Chromium <script>document.write(process.versions.chrome)</script>,
-    and Electron <script>document.write(process.versions.electron)</script>.
+
+  <body >
+    <div id="app" class="grid">
+      <div class='config cell'>
+        <config-form 
+          v-on:start="download"/>
+      </div>
+      <div id="downloads" class="cell g c3 r1">
+        <div class="downloads queued">
+          <h3>Queue</h3>
+          <div class="download scroll" v-for="item in orderedQueue">
+            {{item.id}}
+          </div>
+        </div>
+        <div class="downloads downloading">
+          <h3>Downloading</h3>
+          <div class="download scroll" v-for="download in orderedDownloads">
+            <h5>{{download.title}}</h5>
+            <p>
+            <span>
+              <progress v-value="download.percentComplete | parseFloat" max="100" ></progress>
+              {{download.percentComplete | parseFloat}}
+            </span>
+            <span>Size:{{download.size}}</span>
+            <span>ETA:{{download.eta}}</span>
+            </p>
+          </div>
+        </div>
+        <div class="downloads done">
+          <h3>Downloaded</h3>
+          <div class="download scroll" v-for="download in completedDownloads">
+            <h5>{{download.title}}</h5>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <script>
-      // You can also require other files to run in this process
-      require('./renderer.js')
+// You can also require other files to run in this process
+require('./renderer.js')
     </script>
+<script src="http://localhost:8098"></script>
   </body>
+
 </html>
