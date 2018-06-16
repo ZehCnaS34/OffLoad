@@ -136,6 +136,16 @@ input:focus, select:focus, button:focus {
     outline: none;
 }
 
+.edl-form-group {
+}
+
+.edl-form-group-item.end {
+    border-top-left: 0;
+    border-bottom-left: 0;
+
+    border-top-right: 2px;
+    border-bottom-right: 2px;
+}
 
 .edl.container:focus {
     box-shadow: inset 0 0 .3em var(--grey);

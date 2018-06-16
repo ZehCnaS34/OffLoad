@@ -156,6 +156,22 @@ Vue.component('e-checkbox', {
     `
 })
 
+Vue.component('ef-group', {
+    template: `
+    <div class='edl-form-group'>
+        {{children}}
+    </div>
+    `
+})
+
+Vue.component('efg-end', {
+    props: [],
+    template: `
+    <span class='edl-form-group end'>
+    </span>
+    `
+})
+
 Vue.component('e-text', {
     props: ['label', 'value', 'disabled'],
     template: `
@@ -257,9 +273,6 @@ Vue.component('config-form', {
     },
     template: `
         <div id="config">
-            <div>
-                <svg-offload />
-            </div>
             <br />
             <e-text
                 class="blk"
@@ -289,11 +302,10 @@ Vue.component('config-form', {
                 v-model="downloadType"
                 />
             <br />
-            <e-text
-                :disabled="busy"
-                label='Concurrent Downloads'
-                v-model='concurrent' />
-            <e-slider v-model='concurrent' />
+            <ef-group>
+                <e-slider v-model='concurrent' />
+                <efg-end>{{concurrent}} Concurrent</efg-end>
+            </ef-group>
             <br />
             <div v-if="busy">
                 <button id="edl" class="edl" v-on:click="stop()">stop</button>
