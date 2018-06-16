@@ -1,3 +1,96 @@
+Vue.component('svg-offload', {
+    template: `
+    <svg
+    xmlns:dc="http://purl.org/dc/elements/1.1/"
+    xmlns:cc="http://creativecommons.org/ns#"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:svg="http://www.w3.org/2000/svg"
+    xmlns="http://www.w3.org/2000/svg"
+    height="60"
+    width="210"
+    class="ytd-topbar-logo-renderer"
+    id="svg3809"
+    version="1.1"
+    class="style-scope ytd-topbar-logo-renderer"
+    style="display:block"
+    focusable="false"
+    preserveAspectRatio="xMidYMid meet"
+    viewBox="0 0 210 60">
+    <metadata
+        id="metadata3815">
+        <rdf:RDF>
+        <cc:Work
+            rdf:about="">
+            <dc:format>image/svg+xml</dc:format>
+            <dc:type
+            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+            <dc:title></dc:title>
+        </cc:Work>
+        </rdf:RDF>
+    </metadata>
+    <defs
+        id="defs3813" />
+    <g
+        class="style-scope ytd-topbar-logo-renderer"
+        id="g3788">
+        <path
+        d="M 63,14.87 C 62.28,12.17 60.15,10.04 57.44,9.31 52.54,8 32.88,8 32.88,8 32.88,8 13.23,8 8.32,9.31 5.62,10.03 3.49,12.16 2.76,14.87 1.45,19.77 1.45,30 1.45,30 c 0,0 0,10.23 1.31,15.13 0.72,2.7 2.85,4.83 5.56,5.56 C 13.23,52 32.88,52 32.88,52 c 0,0 19.66,0 24.56,-1.31 2.7,-0.72 4.83,-2.85 5.56,-5.56 1.31,-4.9 1.31,-15.13 1.31,-15.13 0,0 0,-10.23 -1.31,-15.13 z"
+        class="style-scope ytd-topbar-logo-renderer"
+        id="path3784"
+        style="fill:#ff0000" />
+        <polygon
+        points="42.93,30 26.6,20.57 26.6,39.43 "
+        class="style-scope ytd-topbar-logo-renderer"
+        id="polygon3786"
+        style="fill:#ffffff" />
+    </g>
+    <text
+        id="text3819"
+        y="48.582661"
+        x="64.779427"
+        style="font-style:normal;font-weight:normal;font-size:54.81463242px;line-height:1.25;font-family:sans-serif;letter-spacing:-4.11109734px;word-spacing:0px;fill:#282828;fill-opacity:1;stroke:none;stroke-width:1.37036586"
+        xml:space="preserve"><tspan
+        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:51.1603241px;font-family:'Noto Sans';-inkscape-font-specification:'Noto Sans Bold';letter-spacing:-4.11109734px;fill:#282828;fill-opacity:1;stroke-width:1.37036586"
+        y="48.582661"
+        x="64.779427"
+        id="tspan3817">O<tspan
+    id="tspan3821"
+    style="font-size:40.19739914px;fill:#282828;fill-opacity:1;stroke-width:1.37036586">ff</tspan><tspan
+    id="tspan3837"
+    style="letter-spacing:-8.10999966px">L</tspan><tspan
+    id="tspan3823"
+    style="font-size:40.19739914px;fill:#282828;fill-opacity:1;stroke-width:1.37036586"><tspan
+        id="tspan3839"
+        style="letter-spacing:-3.1099999px">o</tspan><tspan
+        style="letter-spacing:-4.61000013px"
+        id="tspan3849">ad</tspan></tspan></tspan></text>
+    <rect
+        y="19.711357"
+        x="20.226543"
+        height="23.186525"
+        width="23.186525"
+        id="rect3881"
+        style="fill:#ff0000;fill-opacity:1" />
+    <rect
+        transform="scale(1,-1)"
+        y="-40.431229"
+        x="23.350969"
+        height="21.048759"
+        width="5.9199638"
+        id="rect3853"
+        style="fill:#ffffff;fill-opacity:1" />
+    <rect
+        transform="scale(1,-1)"
+        y="-40.102341"
+        x="35.026455"
+        height="21.048759"
+        width="5.9199638"
+        id="rect3853-3"
+        style="display:block;fill:#ffffff;fill-opacity:1" />
+    </svg>
+    `
+})
+
 Vue.component('svg-youtube', {
     template: `
       <svg viewBox="0 0 200 60" preserveAspectRatio="xMidYMid meet" focusable="false" style="pointer-events: none; display: block; width: 100%; height: 100%;" class="style-scope ytd-topbar-logo-renderer"><g viewBox="0 0 200 60" preserveAspectRatio="xMidYMid meet" class="style-scope ytd-topbar-logo-renderer">
@@ -45,22 +138,21 @@ Vue.component('svg-youtube', {
     `
 })
 
-
 Vue.component('svg-search', {
     template: `
-    <svg viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet" focusable="false" style="pointer-events: none; display: block; width: 100%; height: 100%;" class="style-scope yt-icon"><g class="style-scope yt-icon">
-        <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" class="style-scope yt-icon"></path>
-      </g></svg>
+    <svg viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet" focusable="false" style="pointer-events: none; display: block; width: 100%; height: 100%;" class="style-scope yt-icon">
+        <g class="style-scope yt-icon">
+            <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" class="style-scope yt-icon"></path>
+        </g>
+    </svg>
     `
 })
 
 Vue.component('e-checkbox', {
     props: ['yes', 'no', 'value'],
     template: `
-        <div class="edl container">
-            <button class="edl toggle on" v-on:click="$emit('input', false)" v-if="value"><svg-search />{{yes}}</button>
-            <button class="edl toggle off" v-on:click="$emit('input', true)" v-else>{{no}}</button>
-        </div>
+        <button class="edl toggle on" v-on:click="$emit('input', false)" v-if="value">{{yes}}</button>
+        <button class="edl toggle off" v-on:click="$emit('input', true)" v-else>{{no}}</button>
     `
 })
 
@@ -68,14 +160,12 @@ Vue.component('e-text', {
     props: ['label', 'value', 'disabled'],
     template: `
         <div class="edl text container">
-            <div class="edl text box">
-                <input 
-                    :placeholder="label"
-                    v-bind:disabled='disabled'
-                    class="edl text"
-                    v-bind:value="value"
-                    v-on:input="$emit('input', $event.target.value)" />
-            </div>
+            <input 
+                :placeholder="label"
+                v-bind:disabled='disabled'
+                class="edl text"
+                v-bind:value="value"
+                v-on:input="$emit('input', $event.target.value)" />
         </div>
     `
 })
@@ -83,9 +173,8 @@ Vue.component('e-text', {
 Vue.component('e-select', {
     props: ['label', 'options', 'value'],
     template: `
-        <div class="form-group">
-            <label class="form-label">{{label}}</label>
-            <select name="download-type" class="form-control" v-bind:value="value">
+        <div class="edl container">
+            <select name="download-type" class="edl" v-bind:value="value">
                 <option 
                     v-for="option in options"
                     v-on:input="$emit('input', $event.target.value)">
@@ -96,10 +185,36 @@ Vue.component('e-select', {
     `
 })
 
+Vue.component('e-slider', {
+    props: ["value"],
+    template: `
+        <div class="edl container">
+            <input class="edl" type="range" min=1 max=16 step=1 :value="value" v-on:input="$emit('input', $event.target.value)" />
+        </div>
+    `
+})
+
+Vue.component('download-thumbnail', {
+    props: ['download'],
+    template: `
+        <div class="edl thumbnail">
+            <img :src="download.video.thumbnail" alt="thumbnail" />
+            <div class="overlay">
+            </div>
+        </div>
+    `
+})
+
+Vue.component('download-progress', {
+    template: ``
+})
+
 Vue.component('download-item', {
     props: ['download'],
     template: `
         <div class="download">
+            <download-thumbnail :download="download" />
+            <download-progress :download="download" />
             <h5>{{download.video.title}}</h5>
             <p>
                 <progress :value="download.description.percentComplete | parseFloat" max="100" ></progress>
@@ -113,11 +228,13 @@ Vue.component('download-item', {
 Vue.component('config-form', {
     data() {
         return {
-            downloadId: 'PLj_Goi54wf0esy4JFDk2ix5Y5-es-S6R0',
-            destinationPath: '/home/alex/Videos/Christopher Odd/DRI',
+            // downloadId: 'PLj_Goi54wf0esy4JFDk2ix5Y5-es-S6R0',
+            // destinationPath: '/home/alex/Videos/Christopher Odd/DRI',
+            downloadId: '',
+            destinationPath: '',
             audioOnly: false,
             concurrent: 4,
-            concurrentOptions: [ 2, 4, 8, 16, 32 ],
+            concurrentOptions: [2, 4, 8, 16, 32],
             downloadType: 'Playlist',
             downloadTypes: [
                 'Playlist',
@@ -139,18 +256,24 @@ Vue.component('config-form', {
         }
     },
     template: `
-        <div class="card-body" id="config">
-            <svg-youtube /.
+        <div id="config">
+            <div>
+                <svg-offload />
+            </div>
+            <br />
             <e-text
+                class="blk"
                 :disabled="busy"
                 label="Download URL"
                 v-model="downloadId"
                 />
+            <br />
             <e-text
                 :disabled="busy"
                 label="Download Destination"
                 v-model="destinationPath"
                 />
+            <br />
             <e-checkbox
                 yes='Audio Only'
                 no='Audio Only'
@@ -158,19 +281,22 @@ Vue.component('config-form', {
                 label="Audio Only"
                 v-model="audioOnly"
                 />
+            <br />
             <e-select
                 :disabled="busy"
                 label="Download Type"
                 v-bind:options="downloadTypes"
                 v-model="downloadType"
                 />
+            <br />
             <e-text
                 :disabled="busy"
                 label='Concurrent Downloads'
-                v-model='concurrent'
-                />
+                v-model='concurrent' />
+            <e-slider v-model='concurrent' />
+            <br />
             <div v-if="busy">
-                <button id="start-btn" class="edl btn" v-on:click="stop()">stop</button>
+                <button id="edl" class="edl" v-on:click="stop()">stop</button>
             </div>
             <div v-else>
                 <button id="start-btn" class="edl btn" v-on:click="start()">start</button>

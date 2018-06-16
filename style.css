@@ -10,6 +10,18 @@
     --dark-grey: #eeeeee;
 }
 
+.ytd-topbar-logo-renderer {
+    max-height: 21px;
+    display: inline-block;
+}
+
+.yt-icon {
+    max-width: 16px;
+    max-height: 16px;
+}
+
+/* grid definitions */
+
 .grid {
     display: grid;
     grid-template-rows: 1fr 1fr 1fr;
@@ -17,17 +29,22 @@
 }
 
 .g { display: grid; }
-.g.c3 { grid-template-columns: 1fr 1fr 1fr; }
-.g.r1 { grid-template-rows: 1fr; }
+.c3 { grid-template-columns: 1fr 1fr 1fr; }
+.r1 { grid-template-rows: 1fr; }
 
-.cell {
-    overflow-y: auto;
-}
 
 #config {
+    display: flex;
+    flex-direction: column;
+    overflow-x: auto;
     box-shadow: 0 0 16px #e6e6e6;
     margin-bottom: 10px;
     padding: 0 16px;
+    padding-bottom: 16px;
+}
+
+#config div {
+    flex: 1;
 }
 
 .config {
@@ -70,24 +87,6 @@ input, body, select {
     overflow-y: auto;
 }
 
-
-table {
-    border-collapse: collapse;
-}
-
-table > thead > tr {
-    background-color: #c8e7f7;
-}
-
-table tr {
-    transition: height .2s;
-}
-
-table td {
-    margin: 0;
-    padding: 0;
-}
-
 #downloads {
     grid-row: 2 / 4;
     grid-column: 1 / 4;
@@ -114,13 +113,19 @@ table td {
     flex: 1;
 }
 
-
 .form-group {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
 }
 
+/* form stuff */
+.blk {
+    display: block;
+}
+
 .edl.container {
+    position: relative;
+    width: 100%;
     background-color: var(--white);
     border: 1px solid var(--light-grey);
     display: inline-block;
@@ -131,24 +136,14 @@ input:focus, select:focus, button:focus {
     outline: none;
 }
 
-button.edl {
-    padding: 0 8px;
-    background: var(--white);
-    border: 1px solid var(--light-grey);
-}
 
-.edl.container::focus {
+.edl.container:focus {
     box-shadow: inset 0 0 .3em var(--grey);
-}
-
-.edl.container .box {
-    padding: 0;
-    margin: 0;
 }
 
 .edl.toggle {
     border-radius: 1px;
-    padding: 0 8px;
+    padding: 4px 8px;
 }
 
 .edl.toggle.on {
@@ -161,10 +156,20 @@ button.edl {
     color: var(--black);
 }
 
-.edl input, .edl button {
-    margin-left: 4px;
+input.edl, button.edl, select.edl  {
+    /* margin-left: 4px; */
     padding: 1px;
     font-size: 16px;
+}
+
+.edl.container > input {
+    display: block;
+}
+
+button.edl {
+    padding: 0 8px;
+    background: var(--white);
+    border: 1px solid var(--light-grey);
 }
 
 .edl.container input {
@@ -173,11 +178,11 @@ button.edl {
     font-size: 16px;
 }
 
-.edl.container input::placeholder {
+.edl.container input::placeholder, .edl.container select::placeholder {
     color: var(--grey);
 }
 
-.edl input {
+.edl input, .edl select, .edl button {
     background-color: var(--white);
     border: none;
     border-radius: 2px;
@@ -202,3 +207,20 @@ button.edl {
     background: #96a2a9;
 }
 
+.thumbnail {
+    position: relative;
+    height: 200px;
+    width: 355px;
+}
+
+.thumbnail > img {
+    height: 200px;
+    width: 355px;
+}
+
+.thumbnail > .overlay {
+    position: absolute;
+    height: 200px;
+    width: 355px;
+    background-color: rgba(12, 12, 12, 0.3);
+}

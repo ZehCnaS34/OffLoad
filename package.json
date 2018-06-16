@@ -1,5 +1,5 @@
 {
-  "name": "ydl",
+  "name": "offload",
   "version": "1.0.0",
   "description": "Graphic visualizer for youtube-dl + youtube-dl-parallel",
   "main": "main.js",
@@ -9,6 +9,7 @@
   "repository": "https://github.com/electron/electron-quick-start",
   "keywords": [
     "Electron",
+    "offload",
     "ydl",
     "youtube-dl",
     "youtube-dl-parallel"
