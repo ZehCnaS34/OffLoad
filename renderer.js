@@ -7,9 +7,12 @@ const EventEmitter = require('events')
 const crypto = require('crypto')
 const P = require('parsimmon')
 const Descriptor = require('./descriptor')
+const fs = require('fs')
+require('./components')
 
 Vue.filter('parseFloat', function (value) {
-    return parseFloat(value)
+    let v = parseFloat(value) || 100
+    return  v
 })
 
 function hex(value) {
@@ -18,7 +21,18 @@ function hex(value) {
         .digest('hex')
 }
 
-const grid = document.getElementsByClassName('grid')[0]
+function chunk(size, fn) {
+    let load = []
+    return function (value) {
+        load.push(value)
+        if (load.length === size) {
+            fn(load)
+            load = []
+        }
+    }
+}
+
+const grid = document.getElementById('app')
 grid.style.height = `${window.innerHeight}px`
 window.onresize = function () {
     console.log('resizing')
@@ -37,7 +51,7 @@ function debounce(fn, amount) {
     }
 }
 
-class LimitQueue {
+class Pipeline {
     constructor(maxCount = 6) {
         this.active = new Set()
         this.queue = []
@@ -48,6 +62,10 @@ class LimitQueue {
         this.maxCount = maxCount
         this.emitter = new EventEmitter()
 
+    }
+
+    percentComplete() {
+        return this.completed.length / this.queue.length
     }
 
     push(value) {
@@ -73,7 +91,7 @@ class LimitQueue {
 
     _run() {
         if (this.active.size >= this.maxCount || this.queue.length === 0) {
-            console.log(`Task waiting :: running=${this.active.size} queue=${this.queue.length}`)
+            // console.log(`Task waiting :: running=${this.active.size} queue=${this.queue.length}`)
             if (this.active.size === 0 && this.queue.length === 0) {
                 this.emitter.emit('zero')
             }
@@ -82,7 +100,7 @@ class LimitQueue {
         }
         const task = this.queue.shift()
         this.emitter.emit('dequeue', task);
-        console.log(`Running task=${task}`)
+        // console.log(`Running task=${task}`)
         this.active.add(task)
         this.emitter.emit('data', this._done(task), task)
     }
@@ -105,7 +123,7 @@ class LimitQueue {
 
     clear() {
         this.ticker = 0
-        console.log('TaskLoop Cleared')
+        // console.log('TaskLoop Cleared')
         this.queue = []
         this.active = new Set()
         // clearInterval(this.looper)
@@ -122,61 +140,67 @@ class DownloadManager {
 
         this._idQueue = null
 
-        this.idQueue.onValue(({done, ticker}, {id, audioOnly, destinationPath}) => {
-            this.getTitle(id)
-                .then(title => {
-                    const handle = this.createHandle(title)
-                    const args = [
-                        '--newline',
-                        '-o',
-                        `%(title)s.%(ext)s`,
-                        `https://youtube.com/watch?v=${id}`
-                        
-                    ];
-                    if (audioOnly) {
-                        args.unshift('-x')
-                    }
+        this.idQueue.onValue(({done, ticker}, download) => {
+            // {video, audioOnly, destinationPath}
+            // const handle = this.createHandle(download.video.title)
+            const args = [
+                '--newline',
+                '-o',
+                `%(title)s.%(ext)s`,
+                `https://youtube.com/watch?v=${download.video.id}`
+            ];
 
-                    const download = {
-                        ticker,
-                        id, title,
-                        job: spawn('youtube-dl', args, { cwd: destinationPath })
-                    }
+            if (download.audioOnly) {
+                args.unshift('-x')
+            }
 
-                    download.job.stdout.on('data', (data) => {
-                        for (const line of data.toString().trim().split('\n')) {
-                            this.handlePayload({handle, line, ticker})
-                        }
-                    })
+            download.ticker = ticker
+            download.job = spawn('youtube-dl', args, { cwd: download.destinationPath })
 
-                    download.job.stderr.on('data', (err) => {
-                        console.error(err.toString())
-                    })
+            download.job.stdout.on('data', (data) => {
+                for (const line of data.toString().trim().split('\n')) {
+                    this.handlePayload({...download, line})
+                }
+            })
 
-                    download.job.on('close', (data) => {
-                        done()
-                        this.emitter.emit('downloaded', { handle, id, title })
-                        delete this.downloads[handle]
-                    })
+            download.job.stderr.on('data', (err) => {
+                console.error(err.toString())
+                download.errors.push(err.toString())
+                this.handleError(download, err.toString())
+            })
 
-                    this.downloads[handle] = download
-                })
-                .catch((err) => {
-                    done()
-                    console.error(err.toString())
-                })
+            download.job.on('close', (data) => {
+                done()
+                this.emitter.emit('downloaded', download)
+                delete this.downloads[download.handle]
+            })
+
+            this.downloads[download.handle] = download
         })
     }
 
     get idQueue() {
         if (!this._idQueue) {
-            this._idQueue = new LimitQueue(4)
+            this._idQueue = new Pipeline(4)
             this._idQueue.onZero(() => {
                 console.log('-----DONE-----')
                 this.emitter.emit('done')
             })
         }
         return this._idQueue
+    }
+
+    handlePayload(download) {
+        const description = this.descriptor.get(download.line)
+
+        if (!description) return
+
+        // console.log(payload)
+        this.emitter.emit('payload', {...download, description})
+    }
+
+    handleError(download, error) {
+        this.emitter.emit('error', download, error)
     }
 
     createHandle(value) {
@@ -186,69 +210,35 @@ class DownloadManager {
             .substr(0, 10)
     }
 
-    getTitle(id) {
-        return new Promise((resolve, reject) => {
-            let title = ""
+    getInformation(url, onVideo) {
+        // title     = WHAT IS LIFE BUT DEATH PENDING? - Part 1 - VAMPYR Let's Play Walkthrough Gameplay
+        // id        = 3ckt5UfqgrM
+        // thumbnail = https://i.ytimg.com/vi/3ckt5UfqgrM/maxresdefault.jpg
+        // duration  = 1:37:25
+        const yid = spawn(
+            'youtube-dl', 
+            '--get-title --get-thumbnail --get-duration --get-id'.split(' ')
+        )
 
-            const yid = spawn('youtube-dl', ['--get-title', id])
-
-            yid.stdout.on('data', (data) => {
-                title = title + data.toString()
-            })
-
-            yid.stderr.on('data', (err) => reject(err))
-
-            yid.on('close', () => {
-                resolve(title)
-            })
+        const chunker = chunk(4, ([title, id, thumbnail, duration]) => {
+            onVideo(null, { title, id, thumbnail, duration, url })
         })
-    }
-
-    getIds(playlistId, onId) {
-        // console.log(`getIds(${playlistId}, onId)`)
-        const yid = spawn('youtube-dl', ['--get-id', playlistId])
 
         yid.stdout.on('data', (data) => {
-            for (const line of data.toString().trim().split('\n')) {
-                console.log(`line=${line}`)
-                if (line) {
-                    onId(null, line)
-                }
-            }
+            data.toString()
+                .trim()
+                .split('\n')
+                .filter(line => line !== '')
+                .map(chunker)
         })
 
         yid.stderr.on('data', (err) => {
-            onId(err)
-            console.error(playlistId, err.toString())
-            this.emitter.emit('failed', {
-                context: {
-                    method: 'getIds',
-                    args: [playlistId, onId]
-                },
-                err: err.toString()
+            onVideo({
+                err: err.toString(),
+                url,
             })
         })
-    }
 
-    handlePayload({handle, line, ticker}) {
-        const description = this.descriptor.get(line)
-
-        if (!description) {
-            // console.log(handle, line)
-            return
-        }
-
-        const payload = {
-            handle,
-            ticker,
-            description,
-            id: this.downloads[handle].id,
-            title: this.downloads[handle].title
-        }
-
-        // console.log(payload)
-
-        this.emitter.emit('payload', payload)
     }
 
     download({
@@ -257,12 +247,22 @@ class DownloadManager {
         audioOnly = false,
         concurrent
     }) {
+        try {
+            fs.mkdirSync(destinationPath)
+        } catch (e) {}
         this.idQueue.maxCount = concurrent
-        this.getIds(
+        this.getInformation(
             playlistId,
-            (err, id) => {
+            (err, video) => {
                 if (err) return
-                this.idQueue.push({id, destinationPath, audioOnly, playlistId})
+                this.idQueue.push({
+                    handle: this.createHandle(video.id),
+                    errors: [],
+                    concurrent,
+                    destinationPath,
+                    audioOnly,
+                    video
+                })
             }
         )
     }
@@ -281,6 +281,10 @@ class DownloadManager {
 
     onDownloaded(callback) {
         this.emitter.on('downloaded', callback)
+    }
+
+    onError(callback) {
+        this.emitter.on('error', callback)
     }
     
     onFailed(callback) {
@@ -305,140 +309,11 @@ DownloadManager.CHANNEL = 'Channel'
 
 const downloadManager = new DownloadManager()
 
-Vue.component('e-checkbox', {
-    props: ['label', 'value'],
-    template: `
-        <div class="form-group">
-            <label class="form-label">{{label}}</label>
-            <input 
-                type='checkbox'
-                class="form-control"
-                v-bind:value="value"
-                v-on:input="$emit('input', $event.target.value)"
-                />
-        </div>
-    `
-})
-
-Vue.component('e-text', {
-    props: ['label', 'value', 'disabled'],
-    template: `
-        <div class="form-group">
-            <label class="form-label">{{label}}</label>
-            <input 
-                v-bind:disabled='disabled'
-                class="form-control"
-                v-bind:value="value"
-                v-on:input="$emit('input', $event.target.value)"
-                />
-        </div>
-    `
-})
-
-Vue.component('e-select', {
-    props: ['label', 'options', 'value'],
-    template: `
-        <div class="form-group">
-            <label class="form-label">{{label}}</label>
-            <select name="download-type" class="form-control" v-bind:value="value">
-                <option 
-                    v-for="option in options"
-                    v-on:input="$emit('input', $event.target.value)">
-                    {{option}}
-                </option>
-            </select>
-        </div>
-    `
-})
-
-Vue.component('download-item', {
-    props: ['item'],
-    template: `
-        <div class="download scroll" v-for="download in orderedDownloads">
-            <h5>{{download.title}}</h5>
-            <p>
-                <span>
-                <progress v-value="download.percentComplete" max="100" ></progress>
-                {{download.percentComplete | parseFloat}}
-                </span>
-                <span>Size:{{download.size}}</span>
-                <span>ETA:{{download.eta}}</span>
-            </p>
-        </div>
-    `
-})
-
-Vue.component('config-form', {
-    data() {
-        return {
-            downloadId: 'PLj_Goi54wf0c_cSau6aJNd7tuNwHgYH-5',
-            destinationPath: '/home/alex/Videos/Christopher Odd',
-            audioOnly: false,
-            concurrent: 4,
-            concurrentOptions: [ 2, 4, 8, 16, 32 ],
-            downloadType: 'Playlist',
-            downloadTypes: [
-                'Playlist',
-                'Video'
-            ],
-            busy: false
-        }
-    },
-    methods: {
-        start() {
-            this.$emit('start', {
-                downloadId: this.downloadId,
-                destinationPath: this.destinationPath,
-                audioOnly: this.audioOnly,
-                downloadType: this.downloadType,
-                concurrent: this.concurrent
-
-            })
-        }
-    },
-    template: `
-        <div class="card-body" id="config">
-            <e-text
-                :disabled="busy"
-                label="Download Id"
-                v-model="downloadId"
-                />
-            <e-text
-                :disabled="busy"
-                label="Destination Path"
-                v-model="destinationPath"
-                />
-            <e-checkbox
-                :disabled="busy"
-                label="Audio Only"
-                v-model="audioOnly"
-                />
-            <e-select
-                :disabled="busy"
-                label="Download Type"
-                v-bind:options="downloadTypes"
-                v-model="downloadType"
-                />
-            <e-select
-                :disabled="busy"
-                label='Concurrent Downloads'
-                v-bind:options='concurrentOptions'
-                v-model='concurrent'
-                />
-            <div v-if="busy">
-                <button id="start-btn" class="btn" v-on:click="stop()">stop</button>
-            </div>
-            <div v-else>
-                <button id="start-btn" class="btn" v-on:click="start()">start</button>
-            </div>
-        </div>
-    `
-})
-
 const downloadColumn = new Vue({
     el: '#app',
     methods: {
         download({downloadId, destinationPath, audioOnly, concurrent}) {
+            console.log(downloadId, destinationPath, audioOnly, concurrent)
             downloadManager.download({
                 destinationPath,
                 playlistId: downloadId,
@@ -454,9 +329,9 @@ const downloadColumn = new Vue({
     },
     computed: {
         orderedDownloads() {
-            return Object.values(this.downloads).sort((left, right) => {
-                return left.ticker < right.ticker
-            })
+            return Object
+                .values(this.downloads)
+                .sort((left, right) => left.ticker < right.ticker)
         }
     },
     data: {
@@ -469,28 +344,32 @@ const downloadColumn = new Vue({
 window.downloadColumn = downloadColumn
 window.downloadManager = downloadManager
 
-downloadManager.onPayload(({ handle, title, description, id, ticker }) => {
-    if (description) {
-        Vue.set(downloadColumn.downloads, handle, {
-            ticker,
-            id,
-            title,
-            percentComplete: description.percentComplete,
-            size: description.size,
-            eta: description.eta,
-            done: false
-        })
+downloadManager.onPayload((download) => {
+    if (download.description) {
+        Vue.set(downloadColumn.downloads, download.handle, download)
     }
 })
 
-downloadManager.onQueue(task => {
-    console.log('queue', task)
-    Vue.set(downloadColumn.orderedQueue, task.id, task)
+downloadManager.onError((download, error) => {
+    if (downloadColumn.downloads[download.handle]) {
+        downloadColumn.downloads[download.handle].errors.push(error)
+    } else if (downloadColumn.orderedQueue[download.handle]) {
+        downloadColumn.orderedQueue[download.handle].errors.push(error)
+    } else if (downloadColumn.orderedDownloads[download.handle]) {
+        downloadColumn.orderedDownloads[download.handle].errors.push(error)
+    } else {
+        console.log('error', download.video.title, error)
+    }
 })
 
-downloadManager.onDequeue(task => {
-    console.log('dequeue', task)
-    Vue.delete(downloadColumn.orderedQueue, task.id)
+downloadManager.onQueue(download => {
+    console.log('queue', download.handle)
+    Vue.set(downloadColumn.orderedQueue, download.handle, download)
+})
+
+downloadManager.onDequeue(download => {
+    console.log('dequeue', download.handle)
+    Vue.delete(downloadColumn.orderedQueue, download.handle)
 })
 
 downloadManager.onDownloaded(payload => {

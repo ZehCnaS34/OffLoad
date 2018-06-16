@@ -1,5 +1,15 @@
 /* blue #3daee9 */
 
+:root {
+    --red: #FF0000;
+    --white: #F8F8F8;
+    --black: #282828;
+    --blue: #2793E6;
+    --grey: #A0A0A0;
+    --light-grey: #cccccc;
+    --dark-grey: #eeeeee;
+}
+
 .grid {
     display: grid;
     grid-template-rows: 1fr 1fr 1fr;
@@ -12,6 +22,12 @@
 
 .cell {
     overflow-y: auto;
+}
+
+#config {
+    box-shadow: 0 0 16px #e6e6e6;
+    margin-bottom: 10px;
+    padding: 0 16px;
 }
 
 .config {
@@ -39,7 +55,7 @@
 body {
     padding: 0;
     margin: 0;
-    background: #eff0f1;
+    /* background: #eff0f1; */
     color: #475057;
     font-family: 'Hack';
     font-size: 12px;
@@ -104,6 +120,69 @@ table td {
     grid-template-columns: 1fr 1fr 1fr;
 }
 
+.edl.container {
+    background-color: var(--white);
+    border: 1px solid var(--light-grey);
+    display: inline-block;
+    padding: 2px 6px;
+}
+
+input:focus, select:focus, button:focus {
+    outline: none;
+}
+
+button.edl {
+    padding: 0 8px;
+    background: var(--white);
+    border: 1px solid var(--light-grey);
+}
+
+.edl.container::focus {
+    box-shadow: inset 0 0 .3em var(--grey);
+}
+
+.edl.container .box {
+    padding: 0;
+    margin: 0;
+}
+
+.edl.toggle {
+    border-radius: 1px;
+    padding: 0 8px;
+}
+
+.edl.toggle.on {
+    background-color: var(--red);
+    color: var(--white);
+}
+
+.edl.toggle.off {
+    background-color: var(--dark-grey);
+    color: var(--black);
+}
+
+.edl input, .edl button {
+    margin-left: 4px;
+    padding: 1px;
+    font-size: 16px;
+}
+
+.edl.container input {
+    margin-left: 4px;
+    padding: 1px;
+    font-size: 16px;
+}
+
+.edl.container input::placeholder {
+    color: var(--grey);
+}
+
+.edl input {
+    background-color: var(--white);
+    border: none;
+    border-radius: 2px;
+}
+
 .form-label {
     grid-column: 1 / 2;
     margin: 2px;
@@ -112,9 +191,10 @@ table td {
 
 .form-control {
     grid-column: 2 / 4;
-    background-color: #cddfe8;
-    color: #333;
-    padding: 3px 6px;
+    background-color: var(--white);
+    color: var(--black);
+    padding: 10px 16px;
+    font-size: 16px;
     border: none;
 }
 
