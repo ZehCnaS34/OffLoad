@@ -2,6 +2,8 @@
 // be executed in the renderer process for that window.
 // All of the Node.js APIs are available in this process.
 
+const { Map: IMap } = require('immutable')
+const mkdirp = require('mkdirp')
 const { spawn } = require('child_process')
 const EventEmitter = require('events')
 const crypto = require('crypto')
@@ -42,42 +44,49 @@ class DownloadManager {
 
         this._downloadPipeline = null
 
-        this.downloadPipeline.onValue(({ done, ticker }, download) => {
+        this.downloadPipeline.onValue(({ done, ticker }, handle) => {
             // {video, audioOnly, destinationPath}
             // const handle = this.createHandle(download.video.title)
+            let download = this.downloads[handle]
             const args = [
                 '--newline',
                 '-o',
                 `%(title)s.%(ext)s`,
-                `https://youtube.com/watch?v=${download.video.id}`
+                `https://youtube.com/watch?v=${download.get('video').id}`
             ];
 
-            if (download.audioOnly) {
+            if (download.get('audioOnly')) {
                 args.unshift('-x')
             }
 
-            download.ticker = ticker
-            download.job = spawn('youtube-dl', args, { cwd: download.destinationPath })
+            const job = spawn('youtube-dl', args, { cwd: download.get('destinationPath') })
 
-            download.job.stdout.on('data', (data) => {
+            download = download
+                .set('ticker', ticker)
+                .set('job', job) 
+                .set('status', 1)
+
+            job.stdout.on('data', (data) => {
                 for (const line of data.toString().trim().split('\n')) {
-                    this._handleDataLine({ ...download, line })
+                    this._handleDataLine(download.set('line', line))
                 }
             })
 
-            download.job.stderr.on('data', (err) => {
+            job.stderr.on('data', (err) => {
                 console.error(err.toString())
-                download.errors.push(err.toString())
+                download.get('errors').push(err.toString())
                 this._handleError(download, err.toString())
             })
 
-            download.job.on('close', () => {
+            job.on('close', () => {
                 done()
-                this.emitter.emit('downloaded', download)
-                delete this.downloads[download.handle]
+                download = download.set('status', 0)
+                this._send('downloaded', download)
+                this.downloads[handle] = download
+                // delete this.downloads[handle]
             })
 
-            this.downloads[download.handle] = download
+            this.downloads[handle] = download
         })
     }
 
@@ -85,23 +94,27 @@ class DownloadManager {
         if (!this._downloadPipeline) {
             this._downloadPipeline = new Pipeline(4)
             this._downloadPipeline.onZero(() => {
-                this.emitter.emit('done')
+                this._send('done')
             })
         }
         return this._downloadPipeline
     }
 
+    _send(tag, payload) {
+        this.emitter.emit(tag, payload.toObject())
+    }
+
     _handleDataLine(download) {
-        const description = this.descriptor.get(download.line)
+        const description = this.descriptor.get(download.get('line'))
 
         if (!description) return
 
         // console.log(payload)
-        this.emitter.emit('payload', { ...download, description })
+        this._send('payload', download.set('description', description))
     }
 
     _handleError(download, error) {
-        this.emitter.emit('error', download, error)
+        this.emitter.emit('error', download.toObject(), error)
     }
 
     _createHandle(value) {
@@ -111,6 +124,15 @@ class DownloadManager {
             .substr(0, 10)
     }
 
+    _informationValid(title, id, thumbnail, duration) {
+        return !(
+            typeof title     === 'undefined' ||
+            typeof id        === 'undefined' ||
+            typeof thumbnail === 'undefined' ||
+            typeof duration  === 'undefined'
+        )
+    }
+
     _getInformation(url, onVideo) {
         // title     = WHAT IS LIFE BUT DEATH PENDING? - Part 1 - VAMPYR Let's Play Walkthrough Gameplay
         // id        = 3ckt5UfqgrM
@@ -118,11 +140,13 @@ class DownloadManager {
         // duration  = 1:37:25
         const yid = spawn(
             'youtube-dl',
-            '--get-title --get-thumbnail --get-duration --get-id'.split(' ')
+            `--get-title --get-thumbnail --get-duration --get-id ${url}`.split(' ')
         )
 
         const chunker = createChunker(4, ([title, id, thumbnail, duration]) => {
-            onVideo(null, { title, id, thumbnail, duration, url })
+            if (this._informationValid(title, id, thumbnail, duration))  {
+                onVideo(null, { title, id, thumbnail, duration })
+            }
         })
 
         yid.stdout.on('data', (data) => {
@@ -148,32 +172,48 @@ class DownloadManager {
         audioOnly = false,
         concurrent
     }) {
-        try {
-            fs.mkdirSync(destinationPath)
-        } catch (e) { }
-        this.downloadPipeline._maxCount = concurrent
-        this._getInformation(
-            downloadId,
-            (err, video) => {
-                if (!err)
-                    this.downloadPipeline.push({
-                        handle: this._createHandle(video.id),
-                        errors: [],
-                        concurrent,
-                        destinationPath,
-                        audioOnly,
-                        video
-                    })
+        mkdirp(destinationPath, (err) => {
+            if (!err) {
+                this.downloadPipeline._maxCount = concurrent
+                this._getInformation(
+                    downloadId,
+                    (err, video) => {
+                        if (err) return
+
+                        const handle = this._createHandle(video.id)
+
+                        this.downloads[handle] = IMap({
+                            errors: [],
+                            status: 2,
+                            handle,
+                            concurrent,
+                            destinationPath,
+                            audioOnly,
+                            description: {},
+                            video,
+                        })
+
+                        console.log(this.downloads[handle])
+
+                        this.downloadPipeline.push(handle)
+                    }
+                )
+            } else {
+                console.error(err.toString())
             }
-        )
+        })
     }
 
     onQueue(callback) {
-        this.downloadPipeline.onQueue(callback)
+        this.downloadPipeline.onQueue(handle => {
+            callback(this.downloads[handle].toObject())
+        })
     }
 
     onDequeue(callback) {
-        this.downloadPipeline.onDequeue(callback)
+        this.downloadPipeline.onDequeue(handle => {
+            callback(this.downloads[handle].toObject())
+        })
     }
 
     onDone(callback) {
@@ -221,36 +261,18 @@ const app = new Vue({
         },
         clear() {
             this.orderedQueue = {}
-            this.completedDownloads = {
-            }
-            this.downloads = {
-                "aspdoifjapsodfji": {
-                    handle: "apsodijf",
-                    ticker: 0,
-                    video: {
-                        id: 12,
-                        title: "hi"
-                    },
-                    description: {
-                        eta: "asdf",
-                        percentComplete: "12%",
-                        size: "14g"
-                    }
-                }
-
-            }
+            this.completedDownloads = {}
+            this.downloads = {}
         }
     },
     computed: {
         orderedDownloads() {
             return Object
                 .values(this.downloads)
-                .sort((left, right) => left.ticker < right.ticker)
+                .sort((left, right) => left.status > right.status)
         }
     },
     data: {
-        orderedQueue: {},
-        completedDownloads: {},
         downloads: {}
     }
 })
@@ -264,30 +286,20 @@ downloadManager.onPayload((download) => {
 })
 
 downloadManager.onError((download, error) => {
-    if (app.downloads[download.handle]) {
-        app.downloads[download.handle].errors.push(error)
-    } else if (app.orderedQueue[download.handle]) {
-        app.orderedQueue[download.handle].errors.push(error)
-    } else if (app.orderedDownloads[download.handle]) {
-        app.orderedDownloads[download.handle].errors.push(error)
-    } else {
-        console.log('error', download.video.title, error)
-    }
 })
 
 downloadManager.onQueue(download => {
     console.log('queue', download.handle)
-    Vue.set(app.orderedQueue, download.handle, download)
+    Vue.set(app.downloads, download.handle, download)
 })
 
 downloadManager.onDequeue(download => {
     console.log('dequeue', download.handle)
-    Vue.delete(app.orderedQueue, download.handle)
+    Vue.set(app.downloads, download.handle, download)
 })
 
-downloadManager.onDownloaded(payload => {
-    Vue.set(app.completedDownloads, payload.handle, payload)
-    Vue.delete(app.downloads, payload.handle)
+downloadManager.onDownloaded(download => {
+    Vue.set(app.downloads, download.handle, download)
     // downloadColumn.markDone(id)
 })
 
@@ -296,5 +308,6 @@ downloadManager.onFailed(payload => {
 })
 
 downloadManager.onDone(() => {
+    console.log('done')
     // form.reset()
 })

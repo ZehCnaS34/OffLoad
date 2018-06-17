@@ -1,47 +1,35 @@
 <!DOCTYPE html>
 <html>
 
-<head>
-  <meta charset="UTF-8">
-  <title>OffLoad</title>
-  <link rel="stylesheet" href="./style.css" />
-  <!-- development version, includes helpful console warnings -->
-  <!-- <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script> -->
-  <script src="./vue.js"></script>
-  <!-- production version, optimized for size and speed -->
-  <!-- <script src="https://cdn.jsdelivr.net/npm/vue"></script> -->
-</head>
+  <head>
+    <meta charset="UTF-8">
+    <title>OffLoad</title>
+    <link rel="stylesheet" href="./style.css" />
+    <!-- development version, includes helpful console warnings -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script> -->
+    <script src="./vue.js"></script>
+    <!-- production version, optimized for size and speed -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/vue"></script> -->
+  </head>
 
-<body>
-  <div id="app">
-    <div class='config cell'>
-      <config-form v-on:start="download" />
-    </div>
-    <div id="downloads" class="cell g c3 r1">
-      <div class="downloads queued">
-        <h3>Queue</h3>
-        <div class="download scroll" v-for="item in orderedQueue">
-          {{item.video.title}}
-        </div>
+  <body>
+    <div id="app">
+      <div class='config cell'>
+        <config-form v-on:start="download" />
       </div>
-      <div class="downloads downloading">
-        <h3>Downloading</h3>
-        <download-item :download='download' v-for="download in orderedDownloads" />
-      </div>
-      <div class="downloads done">
-        <h3>Downloaded</h3>
-        <div class="download scroll" v-for="download in completedDownloads">
-          <h5>{{download.video.title}}</h5>
+      <div id="downloads" class="cell g c3 r1">
+        <div class="downloads downloading">
+          <h3>Downloading</h3>
+          <download-item :download='download' v-for="download in orderedDownloads" />
         </div>
       </div>
     </div>
-  </div>
 
-  <script>
-    // You can also require other files to run in this process
-    require('./renderer.js')
-  </script>
-  <script src="http://localhost:8098"></script>
-</body>
+    <script>
+      // You can also require other files to run in this process
+      require('./renderer.js')
+    </script>
+    <script src="http://localhost:8098"></script>
+  </body>
 
 </html>

@@ -57,16 +57,8 @@
     overflow-y: auto;
 }
 
-.downloads.queued {
-    grid-column: 1 / 2;
-}
-
 .downloads.downloading {
-    grid-column: 2 / 3;
-}
-
-.downloads.done {
-    grid-column: 3 / 4;
+    grid-column: 2 / 4;
 }
 
 body {
@@ -137,6 +129,11 @@ input:focus, select:focus, button:focus {
 }
 
 .edl-form-group {
+    display: block;
+}
+
+.edl-form-group-item {
+    display: inline-block;
 }
 
 .edl-form-group-item.end {

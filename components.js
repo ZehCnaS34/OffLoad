@@ -159,7 +159,7 @@ Vue.component('e-checkbox', {
 Vue.component('ef-group', {
     template: `
     <div class='edl-form-group'>
-        {{children}}
+        <slot></slot>
     </div>
     `
 })
@@ -168,6 +168,7 @@ Vue.component('efg-end', {
     props: [],
     template: `
     <span class='edl-form-group end'>
+        <slot></slot>
     </span>
     `
 })
@@ -222,7 +223,10 @@ Vue.component('download-thumbnail', {
 })
 
 Vue.component('download-progress', {
-    template: ``
+    props: ['download'],
+    template: `
+    <span>progress</span>
+    `
 })
 
 Vue.component('download-item', {
@@ -246,8 +250,10 @@ Vue.component('config-form', {
         return {
             // downloadId: 'PLj_Goi54wf0esy4JFDk2ix5Y5-es-S6R0',
             // destinationPath: '/home/alex/Videos/Christopher Odd/DRI',
-            downloadId: '',
-            destinationPath: '',
+            // downloadId: '',
+            // destinationPath: '',
+            downloadId: 'https://www.youtube.com/watch?v=Xd1zlRF4mDk&list=PLj_Goi54wf0cmBbjU7T0ePfZpZ_Yzh6Rq',
+            destinationPath: '/mnt/Drive/Videos/Christopher Odd/DOS2',
             audioOnly: false,
             concurrent: 4,
             concurrentOptions: [2, 4, 8, 16, 32],
@@ -284,26 +290,23 @@ Vue.component('config-form', {
             <e-text
                 :disabled="busy"
                 label="Download Destination"
-                v-model="destinationPath"
-                />
+                v-model="destinationPath" />
             <br />
             <e-checkbox
                 yes='Audio Only'
                 no='Audio Only'
                 :disabled="busy"
                 label="Audio Only"
-                v-model="audioOnly"
-                />
+                v-model="audioOnly" />
             <br />
             <e-select
                 :disabled="busy"
                 label="Download Type"
                 v-bind:options="downloadTypes"
-                v-model="downloadType"
-                />
+                v-model="downloadType" />
             <br />
             <ef-group>
-                <e-slider v-model='concurrent' />
+                <e-slider class="edl-form-group-item" v-model='concurrent' />
                 <efg-end>{{concurrent}} Concurrent</efg-end>
             </ef-group>
             <br />

@@ -20,6 +20,8 @@
     "electron": "^2.0.0"
   },
   "dependencies": {
+    "immutable": "^3.8.2",
+    "mkdirp": "^0.5.1",
     "parsimmon": "^1.7.3"
   }
 }
