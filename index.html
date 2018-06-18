@@ -14,14 +14,17 @@
 
   <body>
     <div id="app">
-      <div class='config cell'>
-        <config-form v-on:start="download" />
-      </div>
-      <div id="downloads" class="cell g c3 r1">
-        <div class="downloads downloading">
-          <h3>Downloading</h3>
-          <download-item :download='download' v-for="download in orderedDownloads" />
+      <div id="config">
+        <input v-model="downloadId" placeholder="Download URL" />
+        <input v-model="destinationPath" placeholder="/Some/Place/On/Your/Computer" />
+        <div id="tweak-panel">
+          <div class="group">
+            <input type="range" v-model="threadCount" min=1 max=16 />
+            <span>{{threadCount}} Conncurrent Downloads</span>
+          </div>
+          <checkbox v-model="audioOnly" on='👍 Audio Only' off='👎 Audio Only' />
         </div>
+        <button>add job</button>
       </div>
     </div>
 

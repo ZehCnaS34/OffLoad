@@ -1,6 +1,13 @@
 /* blue #3daee9 */
 
+body {
+    padding: 0;
+    margin: 0;
+}
+
 :root {
+    --th: 100px;
+    --tw: 177px;
     --red: #FF0000;
     --white: #F8F8F8;
     --black: #282828;
@@ -8,226 +15,94 @@
     --grey: #A0A0A0;
     --light-grey: #cccccc;
     --dark-grey: #eeeeee;
+    --unit: .5em;
 }
 
-.ytd-topbar-logo-renderer {
-    max-height: 21px;
-    display: inline-block;
+input, button, select {
+    outline: none;
 }
-
-.yt-icon {
-    max-width: 16px;
-    max-height: 16px;
-}
-
-/* grid definitions */
-
-.grid {
-    display: grid;
-    grid-template-rows: 1fr 1fr 1fr;
-    grid-template-columns: 1fr 1fr 1fr;
-}
-
-.g { display: grid; }
-.c3 { grid-template-columns: 1fr 1fr 1fr; }
-.r1 { grid-template-rows: 1fr; }
-
 
 #config {
     display: flex;
     flex-direction: column;
-    overflow-x: auto;
-    box-shadow: 0 0 16px #e6e6e6;
-    margin-bottom: 10px;
-    padding: 0 16px;
-    padding-bottom: 16px;
+    padding: var(--unit) var(--unit) 0 var(--unit) ;
+    margin-bottom: var(--unit);
+    box-shadow: 0 0 1em var(--grey);
 }
 
-#config div {
+
+#config > input, #config > button {
+    display: block;
     flex: 1;
+
+    border-radius: 2px;
+    background-color: var(--white);
+    box-shadow: inset 0 0 .2em var(--grey);
+    padding: var(--unit);
+    margin: 0;
+    margin-bottom: var(--unit);
+    border: 0;
 }
 
-.config {
-    grid-column: 1 / 4;
-    grid-row: 1 / 2;
-    overflow-y: auto;
+#config > button:hover {
+    background-color: var(--grey);
 }
 
-.downloads {
-    overflow-y: auto;
+#config > button:active {
+    background-color: var(--red);
 }
 
-.downloads.downloading {
-    grid-column: 2 / 4;
-}
-
-body {
+#tweak-panel {
     padding: 0;
     margin: 0;
-    /* background: #eff0f1; */
-    color: #475057;
-    font-family: 'Hack';
-    font-size: 12px;
-}
-
-input, body, select {
-    font-size: 12px;
-    font-family: 'Hack';
-}
-
-.scroll {
-    overflow-y: auto;
-}
-
-#downloads {
-    grid-row: 2 / 4;
-    grid-column: 1 / 4;
-    width: 100%;
-}
-
-.download {
-    padding: 8px;
-    margin: 8px;
-    box-shadow: 0 0 1px #333;
-}
-
-.download h5 {
-    text-align: left;
-}
-
-.download > p {
     display: flex;
+    margin-bottom: var(--unit);
 }
 
-.download > p span {
-    text-align: left;
-    vertical-align: bottom;
+#tweak-panel > button, #tweak-panel > input[type=range] {
+    padding: var(--unit);
+    border: 0;
+    display: block;
     flex: 1;
 }
 
-.form-group {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+#tweak-panel > .group {
+    margin-left: 0;
+    margin-right: 0;
 }
 
-/* form stuff */
-.blk {
-    display: block;
+.group {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
 }
 
-.edl.container {
-    position: relative;
-    width: 100%;
-    background-color: var(--white);
-    border: 1px solid var(--light-grey);
-    display: inline-block;
-    padding: 2px 6px;
+.group > input, .group > span {
+    padding: var(--unit);
 }
 
-input:focus, select:focus, button:focus {
-    outline: none;
+input[type=range] {
+    -webkit-appearance: none;  /* Override default CSS styles */
+    appearance: none;
+    width: 100%; /* Full-width */
+    height: 25px; /* Specified height */
+    background: var(--white); /* Grey background */
+    outline: none; /* Remove outline */
+    opacity: 0.7; /* Set transparency (for mouse-over effects on hover) */
+    -webkit-transition: .2s; /* 0.2 seconds transition on hover */
+    transition: opacity .2s;
 }
 
-.edl-form-group {
-    display: block;
+/* Mouse-over effects */
+input[type=range]:hover {
+    opacity: 1; /* Fully shown on mouse-over */
 }
 
-.edl-form-group-item {
-    display: inline-block;
+/* slider */
+input[type=range]::-webkit-slider-thumb {
+    /* -webkit-appearance: none; /1* Override default look *1/ */
+    /* appearance: none; */
+    background: var(--red); /* Green background */
+    cursor: pointer; /* Cursor on hover */
 }
 
-.edl-form-group-item.end {
-    border-top-left: 0;
-    border-bottom-left: 0;
-
-    border-top-right: 2px;
-    border-bottom-right: 2px;
-}
-
-.edl.container:focus {
-    box-shadow: inset 0 0 .3em var(--grey);
-}
-
-.edl.toggle {
-    border-radius: 1px;
-    padding: 4px 8px;
-}
-
-.edl.toggle.on {
-    background-color: var(--red);
-    color: var(--white);
-}
-
-.edl.toggle.off {
-    background-color: var(--dark-grey);
-    color: var(--black);
-}
-
-input.edl, button.edl, select.edl  {
-    /* margin-left: 4px; */
-    padding: 1px;
-    font-size: 16px;
-}
-
-.edl.container > input {
-    display: block;
-}
-
-button.edl {
-    padding: 0 8px;
-    background: var(--white);
-    border: 1px solid var(--light-grey);
-}
-
-.edl.container input {
-    margin-left: 4px;
-    padding: 1px;
-    font-size: 16px;
-}
-
-.edl.container input::placeholder, .edl.container select::placeholder {
-    color: var(--grey);
-}
-
-.edl input, .edl select, .edl button {
-    background-color: var(--white);
-    border: none;
-    border-radius: 2px;
-}
-
-.form-label {
-    grid-column: 1 / 2;
-    margin: 2px;
-    margin-top: 5px;
-}
-
-.form-control {
-    grid-column: 2 / 4;
-    background-color: var(--white);
-    color: var(--black);
-    padding: 10px 16px;
-    font-size: 16px;
-    border: none;
-}
-
-.form-control[disabled] {
-    background: #96a2a9;
-}
-
-.thumbnail {
-    position: relative;
-    height: 200px;
-    width: 355px;
-}
-
-.thumbnail > img {
-    height: 200px;
-    width: 355px;
-}
-
-.thumbnail > .overlay {
-    position: absolute;
-    height: 200px;
-    width: 355px;
-    background-color: rgba(12, 12, 12, 0.3);
-}
