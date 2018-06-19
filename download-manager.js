@@ -5,9 +5,9 @@ const crypto = require('crypto')
 const Descriptor = require('./descriptor')
 const Pipeline = require('./pipeline')
 
-const DOWNLOADING = 0,
-    WAITING = 1,
-    DONE = 2
+const DOWNLOADING = 'downloading',
+    WAITING = 'queued',
+    DONE = 'done'
 
 function createChunker(size, fn) {
     let load = []
@@ -49,35 +49,35 @@ class DownloadManager {
             '--newline',
             '-o',
             `%(title)s.%(ext)s`,
-            `https://youtube.com/watch?v=${download.get('video').id}`
+            `https://youtube.com/watch?v=${download.video.id}`
         ];
 
-        if (download.get('audioOnly')) {
+        if (download.audioOnly) {
             args.unshift('-x')
         }
 
-        const job = spawn('youtube-dl', args, { cwd: download.get('destinationPath') })
+        const job = spawn('youtube-dl', args, { cwd: download.destinationPath })
 
-        download = download
-            .set('ticker', ticker)
-            .set('job', job) 
-            .set('status', DOWNLOADING)
+        download.ticker = ticker
+        download.job    = job
+        download.status = DOWNLOADING
 
         job.stdout.on('data', (data) => {
             for (const line of data.toString().trim().split('\n')) {
-                this._handleDataLine(download.set('line', line))
+                download.line = line
+                this._handleDataLine(download)
             }
         })
 
         job.stderr.on('data', (err) => {
             console.error(err.toString())
-            download.get('errors').push(err.toString())
+            download.errors.push(err.toString())
             this._handleError(download, err.toString())
         })
 
         job.on('close', () => {
             done()
-            download = download.set('status', DONE)
+            download.status = DONE
             this._send('downloaded', download)
             this.downloads[handle] = download
             // delete this.downloads[handle]
@@ -87,20 +87,24 @@ class DownloadManager {
     }
 
     _send(tag, payload) {
-        this.emitter.emit(tag, payload.toObject())
+        this.emitter.emit(tag, payload)
     }
 
     _handleDataLine(download) {
-        const description = this.descriptor.get(download.get('line'))
+        const description = this.descriptor.get(download.line)
 
-        if (!description) return
+        if (!description) {
+            console.log(download.line)
+            return
+        }
 
         // console.log(payload)
-        this._send('payload', download.set('description', description))
+        download.description = description
+        this._send('payload', download)
     }
 
     _handleError(download, error) {
-        this.emitter.emit('error', download.toObject(), error)
+        this.emitter.emit('error', download, error)
     }
 
     _createHandle(value) {
@@ -168,7 +172,7 @@ class DownloadManager {
 
                         const handle = this._createHandle(video.id)
 
-                        this.downloads[handle] = IMap({
+                        this.downloads[handle] = {
                             errors: [],
                             status: WAITING,
                             handle,
@@ -177,9 +181,9 @@ class DownloadManager {
                             audioOnly,
                             description: {},
                             video,
-                        })
+                        }
 
-                        console.log(this.downloads[handle])
+                        // console.log(this.downloads[handle])
 
                         this.downloadPipeline.push(handle)
                     }
@@ -192,13 +196,13 @@ class DownloadManager {
 
     onQueue(callback) {
         this.downloadPipeline.onQueue(handle => {
-            callback(this.downloads[handle].toObject())
+            callback(this.downloads[handle])
         })
     }
 
     onDequeue(callback) {
         this.downloadPipeline.onDequeue(handle => {
-            callback(this.downloads[handle].toObject())
+            callback(this.downloads[handle])
         })
     }
 
@@ -223,9 +227,12 @@ class DownloadManager {
     }
 
     cancel() {
-        for (const handle in this.downloads) {
-            this.downloads[handle].job.kill('SIGINT')
-            delete this.downloads[handle]
-        }
+	for (const handle in this.downloads) {
+	    this.downloads[handle].job.stdin.pause();
+	    this.downloads[handle].job.kill();
+	    delete this.downloads[handle]
+	}
     }
 }
+
+module.exports = DownloadManager

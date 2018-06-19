@@ -10,6 +10,7 @@
     <script src="./vue.js"></script>
     <!-- production version, optimized for size and speed -->
     <!-- <script src="https://cdn.jsdelivr.net/npm/vue"></script> -->
+    <link href="https://fonts.googleapis.com/css?family=Arimo|Encode+Sans+Condensed" rel="stylesheet"> 
   </head>
 
   <body>
@@ -19,20 +20,64 @@
         <input v-model="destinationPath" placeholder="/Some/Place/On/Your/Computer" />
         <div id="tweak-panel">
           <div class="group">
-            <input type="range" v-model="threadCount" min=1 max=16 />
-            <span>{{threadCount}} Conncurrent Downloads</span>
+            <input type="range" v-model="concurrent" min=1 max=16 />
+            <span>{{concurrent}} Concurrent Downloads</span>
           </div>
           <checkbox v-model="audioOnly" on='👍 Audio Only' off='👎 Audio Only' />
         </div>
-        <button>add job</button>
+        <button :disabled="disabled" v-on:click="download">add job</button>
+        <button :disabled="!disabled" v-on:click="stop">stop job</button>
       </div>
+      
+      <h3 class='section-header'>Downloading {{downloading.length}} / {{concurrent}}</h3>
+      <div id="downloads">
+        <div class="download" v-for="download in downloading">
+	  <div class="thumbnail">
+	    <img :src="download.video.thumbnail" />
+	    <div class="overlay">
+	      <span>{{download.description.eta}}</span>
+	    </div>
+	  </div>
+          <progress :value="parseFloat(download.description.percentComplete) || 0" max=100 min=0></progress>
+	  <p class='title'>{{download.video.title}}</p>
+	  <p class='error bottom' v-for="error in download.errors">{{error}}</p>
+        </div>
+      </div>
+
+      <h3 class='section-header'>Queued {{queued.length}}</h3>
+      <div id="queued">
+        <div class="download" v-for="download in queued">
+	  <div class="thumbnail">
+	    <img :src="download.video.thumbnail" />
+	    <div class="overlay">
+	      <span>{{download.description.eta}}</span>
+	    </div>
+	  </div>
+	  <p class='title ticker'>{{download.video.title}}</p>
+	  <p class='error ' v-for="error in download.errors">{{error}}</p>
+        </div>
+      </div>
+
+      <h3 class='section-header'>Done {{done.length}}</h3>
+      <div id="done">
+        <div class="download" v-for="download in done">
+	  <div class="thumbnail">
+	    <img :src="download.video.thumbnail" />
+	    <div class="overlay">
+	      <span>{{download.description.eta}}</span>
+	    </div>
+	  </div>
+	  <p class='title'>{{download.video.title}}</p>
+	  <p class='error' v-for="error in download.errors">{{error}}</p>
+        </div>
+      </div>
+
     </div>
 
     <script>
       // You can also require other files to run in this process
       require('./renderer.js')
     </script>
-    <script src="http://localhost:8098"></script>
   </body>
 
 </html>

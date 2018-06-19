@@ -1,9 +1,51 @@
 // Modules to control application life and create native browser window
 const { app, BrowserWindow, ipcMain } = require('electron')
+const DownloadManager = require('./download-manager')
 
+const downloadManager = new DownloadManager()
+
+ipcMain.on('stop', (event, arg) => {
+  downloadManager.cancel();
+})
 
 ipcMain.on('download', (event, arg) => {
-  console.log(arg)
+  downloadManager.download(arg)
+
+
+  downloadManager.onPayload((download) => {
+    console.log('payload')
+    event.sender.send('payload', download)
+  })
+
+  downloadManager.onError((download, error) => {
+    console.log('error')
+  })
+
+  downloadManager.onQueue(download => {
+    console.log('queue')
+    event.sender.send('payload', download)
+  })
+
+  downloadManager.onDequeue(download => {
+    console.log('dequeue')
+    event.sender.send('payload', download)
+  })
+
+  downloadManager.onDownloaded(download => {
+    console.log('downloaded')
+    event.sender.send('payload', download)
+    // downloadColumn.markDone(id)
+  })
+
+  downloadManager.onFailed(payload => {
+    console.log('failed')
+    event.sender.send('payload', payload)
+  })
+
+  downloadManager.onDone(() => {
+    console.log('done')
+    // form.reset()
+  })
 })
 
 

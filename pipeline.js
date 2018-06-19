@@ -11,10 +11,21 @@ class Pipeline {
         this._maxCount = maxCount
         this.emitter = new EventEmitter()
 
+        this._paused = false
+
     }
 
     set maxCount(value) {
         this._maxCount = value
+        this._run()
+    }
+
+    pause() {
+        this._paused = true
+    }
+
+    play() {
+        this._paused = false
         this._run()
     }
 
@@ -44,7 +55,7 @@ class Pipeline {
     }
 
     _run() {
-        if (this.active.size >= this._maxCount || this.queue.length === 0) {
+        if (this.active.size >= this._maxCount || this.queue.length === 0 || this._paused) {
             // console.log(`Task waiting :: running=${this.active.size} queue=${this.queue.length}`)
             if (this.active.size === 0 && this.queue.length === 0) {
                 this.emitter.emit('zero')

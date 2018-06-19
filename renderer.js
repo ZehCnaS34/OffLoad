@@ -3,14 +3,7 @@
 // All of the Node.js APIs are available in this process.
 
 const {ipcRenderer} = require('electron')
-
 require('./components')
-
-Vue.filter('parseFloat', function (value) {
-    let v = parseFloat(value) || 100
-    return v
-})
-
 
 const $app = document.getElementById('app')
 const $content = document.getElementById('content')
@@ -20,7 +13,6 @@ window.$content = $content
 $app.style.height = `${window.innerHeight}px`
 
 window.onresize = function () {
-    console.log('resizing')
     $app.style.height = `${window.innerHeight}px`
 }
 
@@ -29,73 +21,43 @@ window.onresize = function () {
 const app = new Vue({
     el: '#app',
     methods: {
-        download({ downloadId, destinationPath, audioOnly, concurrent }) {
-            console.log(downloadId, destinationPath, audioOnly, concurrent)
+        download() {
+            const { downloadId, destinationPath, audioOnly, concurrent } = this;
+            this.disabled = true
             ipcRenderer.send('download', { downloadId, destinationPath, audioOnly, concurrent })
         },
+        stop() {
+            this.disabled = false
+            ipcRenderer.send('stop')
+        }
     },
     computed: {
-        orderedDownloads() {
-            return Object
-                .values(this.downloading)
-                .sort((left, right) => left.status > right.status)
+        downloading() {
+            return Object.values(this.downloads)
+                .filter(download => download.status === 'downloading')
+        },
+        queued() {
+            return Object.values(this.downloads)
+                .filter(download => download.status === 'queued')
+        },
+        done() {
+            return Object.values(this.downloads)
+                .filter(download => download.status === 'done')
         }
     },
     data: {
-        audioOnly: true,
-        downloadId: '',
-        destinationPath: '',
+        disabled: false,
+        audioOnly: false,
+        downloadId: 'https://www.youtube.com/watch?v=S0QPK9yc2-s&list=PLj_Goi54wf0esy4JFDk2ix5Y5-es-S6R0',
+        destinationPath: '/home/alex/Videos/Christopher Odd/Dragon Age Inquisition',
+        concurrent: 4,
         count: 0,
         completed: 0,
         active: 0,
-        threadCount: 4,
-        downloading: {
-            "asdifjas": {
-                video: {
-                    title: "hi"
-                }
-            }
-        },
-        queue: {},
-        done: {}
+        downloads: {},
     }
 })
 
-
-ipcRenderer.on('payload', (event, arg) => {
+ipcRenderer.on('payload', (event, payload) => {
+    Vue.set(app.downloads, payload.handle, payload)
 })
-
-// downloadManager.onPayload((download) => {
-//     if (download.description) {
-//         Vue.set(app.downloading, download.handle, download)
-//     }
-// })
-
-// downloadManager.onError((download, error) => {
-// })
-
-// downloadManager.onQueue(download => {
-//     app.count += 1
-//     Vue.set(app.queue, download.handle, download)
-// })
-
-// downloadManager.onDequeue(download => {
-//     Vue.delete(app.queue, download.handle)
-//     Vue.set(app.downloading, download.handle, download)
-// })
-
-// downloadManager.onDownloaded(download => {
-//     app.completed += 1
-//     Vue.delete(app.downloading, download.handle)
-//     Vue.set(app.done, download.handle, download)
-//     // downloadColumn.markDone(id)
-// })
-
-// downloadManager.onFailed(payload => {
-//     console.log(payload)
-// })
-
-// downloadManager.onDone(() => {
-//     console.log('done')
-//     // form.reset()
-// })

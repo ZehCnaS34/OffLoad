@@ -1,4 +1,12 @@
 /* blue #3daee9 */
+html {
+ 
+}
+
+* {
+    /* font-family: 'Encode Sans Condensed', sans-serif; */
+    font-family: 'Arimo', sans-serif;
+}
 
 body {
     padding: 0;
@@ -79,6 +87,103 @@ input, button, select {
 
 .group > input, .group > span {
     padding: var(--unit);
+}
+
+.section-header {
+    margin-left: var(--unit);
+}
+
+#downloads, #queued, #done {
+    display: flex;
+    overflow-x: auto;
+}
+
+.download {
+    margin: var(--unit);
+    max-width: 177px;
+    margin: var(--unit);
+    box-shadow: 0 0 var(--unit) var(--grey);
+    border-radius: var(--unit);
+    position: relative;
+
+
+    opacity: 1;
+    animation-name: fadeInOpacity;
+    animation-iteration-count: 1;
+    animation-timing-function: ease-in;
+    animation-duration: 2s;
+}
+
+@keyframes fadeInOpacity {
+    0% {
+	opacity: 0;
+    }
+    100% {
+	opacity: 1;
+    }
+}
+
+.download progress {
+    display: block;
+    width: 100%;
+    margin: 0;
+}
+
+.download > .thumbnail {
+    position: relative;
+}
+
+
+.thumbnail > .overlay {
+    position: absolute;
+    bottom: var(--unit);
+    right: var(--unit);
+}
+
+.overlay span {
+    background-color: rgba(0,0,0, 0.4);
+    color: var(--white);
+    padding: 2px 4px;
+    border-radius: var(--unit);
+}
+
+.thumbnail > img {
+    display: block;
+    margin: 0;
+    max-width: 177px;
+    border-top-right-radius: var(--unit);
+    border-top-left-radius: var(--unit);
+}
+
+.download .title {
+    text-align: center;
+    white-space: nowrap;
+    overflow-x: hidden;
+    animation: scroll-left 15s linear infinite;
+}
+
+.download p {
+    font-size: 12px;
+    padding: var(--unit);
+    margin: 0;
+}
+
+p.error {
+    background-color: var(--red);
+    color: var(--white);
+    font-weight: bold;
+    white-space: nowrap;
+    overflow-x: hidden;
+}
+
+.cap {
+  border-top-right-radius: var(--unit);
+  border-top-left-radius: var(--unit);
+}
+
+.bottom {
+  border-bottom-right-radius: var(--unit);
+  border-bottom-left-radius: var(--unit);
 }
 
 input[type=range] {
