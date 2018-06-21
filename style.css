@@ -83,10 +83,19 @@ input, button, select {
     flex: 1;
     display: flex;
     flex-direction: row;
+    padding: var(--unit);
+    background: var(--unit);
+    box-shadow: inset 0 0 var(--unit) var(--grey);
+    border-radius: 2px;
 }
 
 .group > input, .group > span {
-    padding: var(--unit);
+  margin: 0;
+  flex: 1;
+}
+
+.group > span {
+  text-align: right;
 }
 
 .section-header {
@@ -204,7 +213,7 @@ p.error {
 }
 
 input[type=range] {
-    -webkit-appearance: none;  /* Override default CSS styles */
+    /* -webkit-appearance: none;  /1* Override default CSS styles *1/ */
     appearance: none;
     width: 100%; /* Full-width */
     height: 25px; /* Specified height */

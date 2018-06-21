@@ -23,13 +23,10 @@ const app = new Vue({
     methods: {
         download() {
             const { downloadId, destinationPath, audioOnly, concurrent } = this;
-            this.disabled = true
             ipcRenderer.send('download', { downloadId, destinationPath, audioOnly, concurrent })
+            this.downloadId = '';
+            this.destinationPath = '';
         },
-        stop() {
-            this.disabled = false
-            ipcRenderer.send('stop')
-        }
     },
     computed: {
         downloading() {
@@ -46,7 +43,6 @@ const app = new Vue({
         }
     },
     data: {
-        disabled: false,
         audioOnly: false,
         downloadId: 'https://www.youtube.com/watch?v=S0QPK9yc2-s&list=PLj_Goi54wf0esy4JFDk2ix5Y5-es-S6R0',
         destinationPath: '/home/alex/Videos/Christopher Odd/Dragon Age Inquisition',

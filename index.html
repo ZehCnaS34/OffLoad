@@ -25,8 +25,7 @@
           </div>
           <checkbox v-model="audioOnly" on='👍 Audio Only' off='👎 Audio Only' />
         </div>
-        <button :disabled="disabled" v-on:click="download">add job</button>
-        <button :disabled="!disabled" v-on:click="stop">stop job</button>
+        <button v-on:click="download">add job</button>
       </div>
       
       <h3 class='section-header'>Downloading {{downloading.length}} / {{concurrent}}</h3>
