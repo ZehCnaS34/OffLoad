@@ -31,45 +31,21 @@
       
       <h3 class='section-header'>Downloading {{downloading.length}} / {{concurrent}}</h3>
       <div id="downloads">
-        <div class="download" v-for="download in downloading">
-	  <div class="thumbnail">
-	    <img :src="download.video.thumbnail" />
-	    <div class="overlay">
-	      <span>{{download.description.eta}}</span>
-	    </div>
-	  </div>
-          <progress :value="parseFloat(download.description.percentComplete) || 0" max=100 min=0></progress>
-	  <p class='title'>{{download.video.title}}</p>
-	  <p class='error bottom' v-for="error in download.errors">{{error}}</p>
-        </div>
+        <download :download="download" v-for="download in downloading" :key="download.handle">
+	  <progress :value="parseFloat(download.description.percentComplete) || 0" max=100 min=0></progress>
+	</download>
       </div>
 
       <h3 class='section-header'>Queued {{queued.length}}</h3>
       <div id="queued">
-        <div class="download" v-for="download in queued">
-	  <div class="thumbnail">
-	    <img :src="download.video.thumbnail" />
-	    <div class="overlay">
-	      <span>{{download.description.eta}}</span>
-	    </div>
-	  </div>
-	  <p class='title ticker'>{{download.video.title}}</p>
-	  <p class='error ' v-for="error in download.errors">{{error}}</p>
-        </div>
+        <download :download="download" v-for="download in queued" :key="download.handle">
+	</download>
       </div>
 
       <h3 class='section-header'>Done {{done.length}}</h3>
       <div id="done">
-        <div class="download" v-for="download in done">
-	  <div class="thumbnail">
-	    <img :src="download.video.thumbnail" />
-	    <div class="overlay">
-	      <span>{{download.description.eta}}</span>
-	    </div>
-	  </div>
-	  <p class='title'>{{download.video.title}}</p>
-	  <p class='error' v-for="error in download.errors">{{error}}</p>
-        </div>
+        <download :download="download" v-for="download in done" :key="download.handle">
+	</download>
       </div>
 
     </div>

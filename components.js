@@ -1,3 +1,20 @@
+Vue.component('download', {
+    props: ['download'],
+    template: `
+        <div class="download">
+            <div class="thumbnail">
+                <img :src="download.video.thumbnail" />
+                <div class="overlay">
+                    <span>{{download.description.eta}}</span>
+                </div>
+            </div>
+            <slot></slot>
+            <p class='title'>{{download.video.title}}</p>
+            <p class='error bottom' v-for="error in download.errors">{{error}}</p>
+        </div>
+    `
+})
+
 function CommonProp(name, options) {
     Vue.component(name, {
         ...options,

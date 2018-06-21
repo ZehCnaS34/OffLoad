@@ -50,6 +50,8 @@ const app = new Vue({
         audioOnly: false,
         downloadId: 'https://www.youtube.com/watch?v=S0QPK9yc2-s&list=PLj_Goi54wf0esy4JFDk2ix5Y5-es-S6R0',
         destinationPath: '/home/alex/Videos/Christopher Odd/Dragon Age Inquisition',
+        formats: ['mp4'],
+        format: 'mp4',
         concurrent: 4,
         count: 0,
         completed: 0,

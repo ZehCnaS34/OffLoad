@@ -54,6 +54,11 @@ class DownloadManager {
 
         if (download.audioOnly) {
             args.unshift('-x')
+            args.unshift('m4a')
+            args.unshift('-f')
+        } else {
+            args.unshift('mp4')
+            args.unshift('-f')
         }
 
         const job = spawn('youtube-dl', args, { cwd: download.destinationPath })
@@ -160,7 +165,8 @@ class DownloadManager {
         destinationPath,
         downloadId,
         audioOnly = false,
-        concurrent
+        concurrent,
+        format = 'mp4',
     }) {
         mkdirp(destinationPath, (err) => {
             if (!err) {
@@ -175,6 +181,7 @@ class DownloadManager {
                         this.downloads[handle] = {
                             errors: [],
                             status: WAITING,
+                            format,
                             handle,
                             concurrent,
                             destinationPath,
