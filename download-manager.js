@@ -54,8 +54,8 @@ class DownloadManager {
 
         if (download.audioOnly) {
             args.unshift('-x')
-            args.unshift('m4a')
-            args.unshift('-f')
+            // args.unshift('m4a')
+            // args.unshift('-f')
         } else {
             args.unshift('mp4')
             args.unshift('-f')
