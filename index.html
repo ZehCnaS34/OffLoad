@@ -41,7 +41,7 @@
 	</download>
       </div>
 
-      <h3 class='section-header'>Done {{done.length}}</h3>
+      <h3 class='section-header'>Done {{done.length}} <button v-on:click="clear">clear</button></h3>
       <div id="done">
         <download :download="download" v-for="download in done" :key="download.handle">
 	</download>

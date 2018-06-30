@@ -20,6 +20,30 @@ function createChunker(size, fn) {
     }
 }
 
+function run(cmd, args, options) {
+    const job = spawn(cmd, args, options)
+
+    return {
+        onClose(fn) {
+            job.on('close', fn)
+            return this
+        },
+        onError(fn) {
+            job.stderr.on('data', fn)
+            return this
+        },
+        onData(fn) {
+            job.stdout.on('data', (data) => {
+                for (const line of data.toString().trim().split('\n')) {
+                    fn(line)
+                }
+            })
+            return this
+        },
+        job
+    }
+}
+
 class DownloadManager {
     constructor() {
         this.descriptor = new Descriptor()
@@ -54,8 +78,8 @@ class DownloadManager {
 
         if (download.audioOnly) {
             args.unshift('-x')
-            // args.unshift('m4a')
-            // args.unshift('-f')
+            args.unshift('m4a')
+            args.unshift('-f')
         } else {
             args.unshift('mp4')
             args.unshift('-f')
@@ -81,10 +105,10 @@ class DownloadManager {
         })
 
         job.on('close', () => {
-            done()
             download.status = DONE
             this._send('downloaded', download)
             this.downloads[handle] = download
+            done()
             // delete this.downloads[handle]
         })
 
@@ -112,14 +136,14 @@ class DownloadManager {
         this.emitter.emit('error', download, error)
     }
 
-    _createHandle(value) {
+    _getHandle(value) {
         return 'id-' + crypto.createHmac('sha256', 'secret')
             .update(value)
             .digest('hex')
             .substr(0, 10)
     }
 
-    _informationValid(title, id, thumbnail, duration) {
+    _informationIsValid(title, id, thumbnail, duration) {
         return !(
             typeof title     === 'undefined' ||
             typeof id        === 'undefined' ||
@@ -133,32 +157,16 @@ class DownloadManager {
         // id        = 3ckt5UfqgrM
         // thumbnail = https://i.ytimg.com/vi/3ckt5UfqgrM/maxresdefault.jpg
         // duration  = 1:37:25
-        const yid = spawn(
-            'youtube-dl',
-            `--get-title --get-thumbnail --get-duration --get-id ${url}`.split(' ')
-        )
-
-        const chunker = createChunker(4, ([title, id, thumbnail, duration]) => {
-            if (this._informationValid(title, id, thumbnail, duration))  {
+        const chunkData = createChunker(4, ([title, id, thumbnail, duration]) => {
+            if (this._informationIsValid(title, id, thumbnail, duration))  {
                 onVideo(null, { title, id, thumbnail, duration })
             }
         })
 
-        yid.stdout.on('data', (data) => {
-            data.toString()
-                .trim()
-                .split('\n')
-                .filter(line => line !== '')
-                .map(chunker)
-        })
-
-        yid.stderr.on('data', (err) => {
-            onVideo({
-                err: err.toString(),
-                url,
-            })
-        })
-
+        const args = `--get-title --get-thumbnail --get-duration --get-id ${url}`.split(' ')
+        const { job } = run( 'youtube-dl', args)
+            .onData(chunkData)
+            .onError(() => onVideo({err: err.toString(), url}))
     }
 
     download({
@@ -176,17 +184,17 @@ class DownloadManager {
                     (err, video) => {
                         if (err) return
 
-                        const handle = this._createHandle(video.id)
+                        const handle = this._getHandle(video.id)
 
                         this.downloads[handle] = {
                             errors: [],
                             status: WAITING,
+                            description: {},
                             format,
                             handle,
                             concurrent,
                             destinationPath,
                             audioOnly,
-                            description: {},
                             video,
                         }
 

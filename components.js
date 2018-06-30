@@ -7,6 +7,7 @@ Vue.component('download', {
                 <div class="overlay">
                     <span>{{download.description.eta}}</span>
                 </div>
+                <p class="cancel">x</p>
             </div>
             <slot></slot>
             <p class='title'>{{download.video.title}}</p>

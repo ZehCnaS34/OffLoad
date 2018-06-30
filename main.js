@@ -11,7 +11,6 @@ ipcMain.on('stop', (event, arg) => {
 ipcMain.on('download', (event, arg) => {
   downloadManager.download(arg)
 
-
   downloadManager.onPayload((download) => {
     event.sender.send('payload', download)
   })

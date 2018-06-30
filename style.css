@@ -1,92 +1,97 @@
 /* blue #3daee9 */
 html {
- 
+
 }
 
 * {
-    /* font-family: 'Encode Sans Condensed', sans-serif; */
-    font-family: 'Arimo', sans-serif;
+  /* font-family: 'Encode Sans Condensed', sans-serif; */
+  font-family: 'Arimo', sans-serif;
 }
 
 body {
-    padding: 0;
-    margin: 0;
+  padding: 0;
+  margin: 0;
 }
 
 :root {
-    --th: 100px;
-    --tw: 177px;
-    --red: #FF0000;
-    --white: #F8F8F8;
-    --black: #282828;
-    --blue: #2793E6;
-    --grey: #A0A0A0;
-    --light-grey: #cccccc;
-    --dark-grey: #eeeeee;
-    --unit: .5em;
+  --th: 100px;
+  --tw: 177px;
+  --red: #FF0000;
+  --white: #F8F8F8;
+  --black: #282828;
+  --blue: #2793E6;
+  --grey: #A0A0A0;
+  --light-grey: #cccccc;
+  --dark-grey: #eeeeee;
+  --unit: .5em;
 }
 
 input, button, select {
-    outline: none;
+  outline: none;
 }
 
 #config {
-    display: flex;
-    flex-direction: column;
-    padding: var(--unit) var(--unit) 0 var(--unit) ;
-    margin-bottom: var(--unit);
-    box-shadow: 0 0 1em var(--grey);
+  display: flex;
+  flex-direction: column;
+  padding: var(--unit) var(--unit) 0 var(--unit) ;
+  margin-bottom: var(--unit);
+  box-shadow: 0 0 1em var(--grey);
 }
 
 
 #config > input, #config > button {
-    display: block;
-    flex: 1;
+  position: relative;
+  display: block;
+  flex: 1;
 
-    border-radius: 2px;
-    background-color: var(--white);
-    box-shadow: inset 0 0 .2em var(--grey);
-    padding: var(--unit);
-    margin: 0;
-    margin-bottom: var(--unit);
-    border: 0;
+  border-radius: 2px;
+  background-color: var(--white);
+  box-shadow: inset 0 0 .1em var(--red),
+  1px 1px .5em var(--dark-grey);
+  padding: var(--unit);
+  margin: 0;
+  margin-bottom: var(--unit);
+  border: 0;
 }
 
 #config > button:hover {
-    background-color: var(--grey);
+  transform: translate(-1px, calc(-1 * var(--unit) / 2));
+  box-shadow: 
+  inset 0 0 .1em var(--red),
+  1px 1px 1em var(--grey);
 }
 
 #config > button:active {
-    background-color: var(--red);
+  background-color: var(--red);
 }
 
 #tweak-panel {
-    padding: 0;
-    margin: 0;
-    display: flex;
-    margin-bottom: var(--unit);
+  padding: 0;
+  margin: 0;
+  display: flex;
+  margin-bottom: var(--unit);
 }
 
 #tweak-panel > button, #tweak-panel > input[type=range] {
-    padding: var(--unit);
-    border: 0;
-    display: block;
-    flex: 1;
+  padding: var(--unit);
+  border: 0;
+  display: block;
+  flex: 1;
 }
 
 #tweak-panel > .group {
-    margin-left: 0;
-    margin-right: 0;
+  margin-left: 0;
+  margin-right: 0;
 }
 
 .group {
-    flex: 1;
-    display: flex;
-    flex-direction: row;
-    padding: var(--unit);
-    background: var(--unit);
-    box-shadow: inset 0 0 var(--unit) var(--grey);
-    border-radius: 2px;
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  padding: var(--unit);
+  background: var(--unit);
+  box-shadow: inset 0 0 var(--unit) var(--grey);
+  border-radius: 2px;
 }
 
 .group > input, .group > span {
@@ -99,107 +104,125 @@ input, button, select {
 }
 
 .section-header {
-    margin-left: var(--unit);
+  margin-left: var(--unit);
 }
 
 #downloads, #queued, #done {
-    display: flex;
-    overflow-x: auto;
-    overflow-y: auto;
+  display: flex;
+  overflow-x: auto;
+  overflow-y: auto;
 }
 
 .download {
-    margin: var(--unit);
-    max-width: 177px;
-    margin: var(--unit);
-    box-shadow: 0 0 var(--unit) var(--grey);
-    border-radius: var(--unit);
+  margin: var(--unit);
+  max-width: 177px;
+  margin: var(--unit);
+  box-shadow: 0 0 var(--unit) var(--grey);
+  border-radius: var(--unit);
+  position: relative;
+
+
+  opacity: 1;
+  animation-name: fadeInOpacity;
+  animation-iteration-count: 1;
+  animation-timing-function: ease-in;
+  animation-duration: 2s;
+}
+
+.download:hover {
+    box-shadow: 5px 5px var(--unit) var(--grey);
     position: relative;
-
-
-    opacity: 1;
-    animation-name: fadeInOpacity;
-    animation-iteration-count: 1;
-    animation-timing-function: ease-in;
-    animation-duration: 2s;
+    transform: translate(-2px, -2px);
 }
 
 @keyframes fadeInOpacity {
-    0% {
-	opacity: 0;
-    }
-    100% {
-	opacity: 1;
-    }
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 
 .download progress {
-    display: block;
-    width: 100%;
-    margin: 0;
+  display: block;
+  width: 100%;
+  margin: 0;
 }
 
-.download progress[value]::-webkit-progress-bar {
+progress[value]::-webkit-progress-bar {
   -webkit-appearance: none;
   appearance:  none;
   background: var(--grey);
   color: var(--red);
+  border: none;
 }
 
-.download progress[value]::-webkit-progress-value {
+progress[value]::-webkit-progress-value {
   background-image:
-    -webkit-linear-gradient(-45deg, transparent 33%, rgba(0, 0, 0, .1) 33%, rgba(0,0, 0, .1) 66%, transparent 66%),
-    -webkit-linear-gradient(top, rgba(255, 255, 255, .25), rgba(0, 0, 0, .25)),
-    -webkit-linear-gradient(left, var(--blue), var(--red)); 
+  -webkit-linear-gradient(-45deg, transparent 33%, rgba(0, 0, 0, .1) 33%, rgba(0,0, 0, .1) 66%, transparent 66%),
+  -webkit-linear-gradient(top, rgba(255, 255, 255, .25), rgba(0, 0, 0, .25)),
+  -webkit-linear-gradient(left, var(--blue), var(--red)); 
   background-size: 35px 20px, 100% 100%, 100% 100%;
 }
 
 
 .download > .thumbnail {
-    position: relative;
+  position: relative;
 }
 
 
 .thumbnail > .overlay {
-    position: absolute;
-    bottom: var(--unit);
-    right: var(--unit);
+  position: absolute;
+  bottom: var(--unit);
+  right: var(--unit);
+}
+
+.thumbnail > .cancel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  border-top-right-radius: var(--unit);
+  border-bottom-left-radius: var(--unit);
+  padding: var(--unit);
+  background-color: rgba(0,0,0, 0.4);
+  color: var(--white);
 }
 
 .overlay span {
-    background-color: rgba(0,0,0, 0.4);
-    color: var(--white);
-    padding: 2px 4px;
-    border-radius: var(--unit);
+  background-color: rgba(0,0,0, 0.4);
+  color: var(--white);
+  padding: 2px 4px;
+  border-radius: var(--unit);
 }
 
 .thumbnail > img {
-    display: block;
-    margin: 0;
-    max-width: 177px;
-    border-top-right-radius: var(--unit);
-    border-top-left-radius: var(--unit);
+  display: block;
+  margin: 0;
+  max-width: 177px;
+  border-top-right-radius: var(--unit);
+  border-top-left-radius: var(--unit);
 }
 
 .download .title {
-    text-align: center;
-    white-space: nowrap;
-    overflow-x: hidden;
-    animation: scroll-left 15s linear infinite;
+  text-align: center;
+  white-space: nowrap;
+  overflow-x: hidden;
+  animation: scroll-left 15s linear infinite;
 }
 
 .download p {
-    font-size: 12px;
-    padding: var(--unit);
-    margin: 0;
+  font-size: 12px;
+  padding: var(--unit);
+  margin: 0;
 }
 
 p.error {
-    background-color: var(--red);
-    color: var(--white);
-    font-weight: bold;
-    white-space: nowrap;
-    overflow-x: hidden;
+  background-color: var(--red);
+  color: var(--white);
+  font-weight: bold;
+  white-space: nowrap;
+  overflow-x: hidden;
 }
 
 .cap {
@@ -213,27 +236,27 @@ p.error {
 }
 
 input[type=range] {
-    /* -webkit-appearance: none;  /1* Override default CSS styles *1/ */
-    appearance: none;
-    width: 100%; /* Full-width */
-    height: 25px; /* Specified height */
-    background: var(--white); /* Grey background */
-    outline: none; /* Remove outline */
-    opacity: 0.7; /* Set transparency (for mouse-over effects on hover) */
-    -webkit-transition: .2s; /* 0.2 seconds transition on hover */
-    transition: opacity .2s;
+  /* -webkit-appearance: none;  /1* Override default CSS styles *1/ */
+  appearance: none;
+  width: 100%; /* Full-width */
+  height: 25px; /* Specified height */
+  background: var(--white); /* Grey background */
+  outline: none; /* Remove outline */
+  opacity: 0.7; /* Set transparency (for mouse-over effects on hover) */
+  -webkit-transition: .2s; /* 0.2 seconds transition on hover */
+  transition: opacity .2s;
 }
 
 /* Mouse-over effects */
 input[type=range]:hover {
-    opacity: 1; /* Fully shown on mouse-over */
+  opacity: 1; /* Fully shown on mouse-over */
 }
 
 /* slider */
 input[type=range]::-webkit-slider-thumb {
-    /* -webkit-appearance: none; /1* Override default look *1/ */
-    /* appearance: none; */
-    background: var(--red); /* Green background */
-    cursor: pointer; /* Cursor on hover */
+  /* -webkit-appearance: none; /1* Override default look *1/ */
+  /* appearance: none; */
+  background: var(--red); /* Green background */
+  cursor: pointer; /* Cursor on hover */
 }
 

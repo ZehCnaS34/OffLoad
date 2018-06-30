@@ -27,6 +27,13 @@ const app = new Vue({
             this.downloadId = '';
             this.destinationPath = '';
         },
+        clear() {
+            for (const key in this.downloads) {
+                if (this.downloads[key].status === 'done') {
+                    Vue.delete(this.downloads, key)
+                }
+            }
+        }
     },
     computed: {
         downloading() {
