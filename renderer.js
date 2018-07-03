@@ -2,7 +2,7 @@
 // be executed in the renderer process for that window.
 // All of the Node.js APIs are available in this process.
 
-const {ipcRenderer} = require('electron')
+const { ipcRenderer } = require('electron')
 require('./components')
 
 const $app = document.getElementById('app')

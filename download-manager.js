@@ -166,7 +166,7 @@ class DownloadManager {
         const args = `--get-title --get-thumbnail --get-duration --get-id ${url}`.split(' ')
         const { job } = run( 'youtube-dl', args)
             .onData(chunkData)
-            .onError(() => onVideo({err: err.toString(), url}))
+            .onError(err => onVideo({err: err.toString(), url}))
     }
 
     download({
@@ -182,7 +182,10 @@ class DownloadManager {
                 this._getInformation(
                     downloadId,
                     (err, video) => {
-                        if (err) return
+                        if (err) {
+                            console.log(err)
+                            return
+                        }
 
                         const handle = this._getHandle(video.id)
 
